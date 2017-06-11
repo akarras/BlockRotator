@@ -1,0 +1,9 @@
+name: BlockRotator
+version: 1.0
+main: com.colorfulchew.blockrotator.BlockRotator
+author: colorfulchew
+description: A plugin that allows users to rotate Terracotta blocks
+permissions:
+    blockrotator.rotate:
+        default: true
+        description: Allows the user to rotate terracotta
