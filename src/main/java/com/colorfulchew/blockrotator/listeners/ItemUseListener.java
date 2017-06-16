@@ -6,14 +6,17 @@
 package com.colorfulchew.blockrotator.listeners;
 
 import com.colorfulchew.blockrotator.BlockRotator;
-import java.util.ArrayList;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.event.Event;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 /**
  *
@@ -21,7 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class ItemUseListener implements Listener {
     
-    private boolean ignoreNext = true;
+    private boolean ignoreNext = false;
     public BlockRotator plugin;
     
     public ItemUseListener(BlockRotator plugin) {
@@ -32,8 +35,10 @@ public class ItemUseListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=false)
     public void ItemInteract(PlayerInteractEvent e) {
         if(ignoreNext) return;
+        // Checks player permissions
         if(e.getPlayer().hasPermission("blockrotator.rotate")) {
             if(e.getMaterial() == Material.BONE) {
+                if(!canBuild(e)) return;
                 if(e.hasBlock()) {
                     Block block = e.getClickedBlock();
                     // Check terracotta
@@ -73,17 +78,12 @@ public class ItemUseListener implements Listener {
         }
     }
     
-    /**
-     * Checks if the player is able to interact with that block
-     * @param e Interact event for the block that the player is attempting to manipulate
-     * @return true if the player can interact, false if the player cannot.
-     */
-    private boolean canInteract(PlayerInteractEvent e) {
+    private boolean canBuild(PlayerInteractEvent e) {
         ignoreNext = true;
-        ArrayList<Event> events = new ArrayList<>();
-        PlayerInteractEvent event = new PlayerInteractEvent(e.getPlayer(), e.getAction(), e.getItem(), e.getClickedBlock(), e.getBlockFace());
+        
+        BlockPlaceEvent event = new BlockPlaceEvent(e.getClickedBlock(), null, null, null, e.getPlayer(), true, EquipmentSlot.OFF_HAND);
         try {
-            plugin.getServer().getPluginManager().callEvent(event);
+            Bukkit.getPluginManager().callEvent(event);
         } catch (IllegalStateException ex) {
             ignoreNext = false;
             return false;
@@ -92,6 +92,7 @@ public class ItemUseListener implements Listener {
             ignoreNext = false;
             return false;
         }
+        
         ignoreNext = false;
         return true;
     }
