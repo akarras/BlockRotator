@@ -46,19 +46,14 @@ public class ItemUseListener implements Listener {
                         BlockData blockData = block.getBlockData();
                         if(blockData instanceof Directional) {
                         	Directional directional = (Directional) blockData;
-                        	if (directional.getFacing().equals(BlockFace.DOWN)){
-                        		directional.setFacing(BlockFace.UP);
-                        		
-                        	}else if  (directional.getFacing().equals(BlockFace.UP)){
-                        		directional.setFacing(BlockFace.NORTH);
-                        	}else if  (directional.getFacing().equals(BlockFace.NORTH)){
+                        	if  (directional.getFacing().equals(BlockFace.NORTH)){
                         		directional.setFacing(BlockFace.WEST);
                         	}else if  (directional.getFacing().equals(BlockFace.WEST)){
                         		directional.setFacing(BlockFace.EAST);
                         	}else if  (directional.getFacing().equals(BlockFace.EAST)){
                         		directional.setFacing(BlockFace.SOUTH);
                         	}else if  (directional.getFacing().equals(BlockFace.SOUTH)){
-                        		directional.setFacing(BlockFace.DOWN);
+                        		directional.setFacing(BlockFace.NORTH);
                         	}
                         	
                            
