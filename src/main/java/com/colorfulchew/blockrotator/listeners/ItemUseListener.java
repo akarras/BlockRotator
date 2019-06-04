@@ -43,35 +43,57 @@ public class ItemUseListener implements Listener {
                     Block block = e.getClickedBlock();
                     // Check terracotta
                     if(block.getType().toString().contains("TERRACOTTA")) {
-                        byte blockData = block.getData();
-                        // Wrap block data back to 0
-                        if(blockData == 3) {
-                            blockData = 0;
-                        } else {
-                            blockData++;
+                        BlockData blockData = block.getBlockData();
+                        if(blockData instanceof Directional) {
+                        	Directional directional = (Directional) blockData;
+                        	if (directional.getFacing().equals(BlockFace.DOWN)){
+                        		directional.setFacing(BlockFace.UP);
+                        		
+                        	}else if  (directional.getFacing().equals(BlockFace.UP)){
+                        		directional.setFacing(BlockFace.NORTH);
+                        	}else if  (directional.getFacing().equals(BlockFace.NORTH)){
+                        		directional.setFacing(BlockFace.WEST);
+                        	}else if  (directional.getFacing().equals(BlockFace.WEST)){
+                        		directional.setFacing(BlockFace.EAST);
+                        	}else if  (directional.getFacing().equals(BlockFace.EAST)){
+                        		directional.setFacing(BlockFace.SOUTH);
+                        	}else if  (directional.getFacing().equals(BlockFace.SOUTH)){
+                        		directional.setFacing(BlockFace.DOWN);
+                        	}
+                        	
+                           
+                          
+                            e.getClickedBlock().setBlockData(directional);
+                        }else {
+                            
                         }
-                        block.setData(blockData);
                     }
                     // Check terracotta
                     if(block.getType().toString().contains("STAIRS")) {
-                        byte blockData = block.getData();
-                        // Check if the player is sneaking
-                        if(e.getPlayer().isSneaking()) {
-                            // Flip the stairs upside down
-                            if(blockData > 3) {
-                                blockData = (byte)(blockData - 4);
-                            } else {
-                                blockData = (byte)(blockData + 4);
-                            }
-                        } else {
-                            // Rotate
-                            if(blockData % 4 == 3) {
-                                blockData = (byte)((int)(blockData / 4) * 4);
-                            } else {
-                                blockData++;
-                            }
+                       BlockData blockData = block.getBlockData();
+                        if(blockData instanceof Directional) {
+                        	Directional directional = (Directional) blockData;
+                        	if (directional.getFacing().equals(BlockFace.DOWN)){
+                        		directional.setFacing(BlockFace.UP);
+                        		
+                        	}else if  (directional.getFacing().equals(BlockFace.UP)){
+                        		directional.setFacing(BlockFace.NORTH);
+                        	}else if  (directional.getFacing().equals(BlockFace.NORTH)){
+                        		directional.setFacing(BlockFace.WEST);
+                        	}else if  (directional.getFacing().equals(BlockFace.WEST)){
+                        		directional.setFacing(BlockFace.EAST);
+                        	}else if  (directional.getFacing().equals(BlockFace.EAST)){
+                        		directional.setFacing(BlockFace.SOUTH);
+                        	}else if  (directional.getFacing().equals(BlockFace.SOUTH)){
+                        		directional.setFacing(BlockFace.DOWN);
+                        	}
+                        	
+                           
+                          
+                            e.getClickedBlock().setBlockData(directional);
+                        }else {
+                            
                         }
-                        block.setData(blockData);
                     }
                 }
             }   
