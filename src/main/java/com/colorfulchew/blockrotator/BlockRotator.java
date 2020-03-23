@@ -8,18 +8,22 @@ package com.colorfulchew.blockrotator;
 import com.colorfulchew.blockrotator.listeners.ItemUseListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Logger;
+
 /**
  *
  * @author Aaron
  */
 public class BlockRotator extends JavaPlugin {
+    public Logger log;
+
     @Override
     public void onEnable() {
+        log = this.getLogger();
         getServer().getPluginManager().registerEvents(new ItemUseListener(this), this);
+
     }
     
     @Override
-    public void onDisable() {
-        
-    }
+    public void onDisable() {}
 }
