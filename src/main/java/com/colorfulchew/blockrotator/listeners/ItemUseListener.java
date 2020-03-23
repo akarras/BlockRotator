@@ -6,11 +6,18 @@
 package com.colorfulchew.blockrotator.listeners;
 
 import com.colorfulchew.blockrotator.BlockRotator;
+import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Player;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Orientable;
+import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.EventPriority;
@@ -30,51 +37,110 @@ public class ItemUseListener implements Listener {
     public ItemUseListener(BlockRotator plugin) {
         this.plugin = plugin;
     }
+
+    private static boolean PassesBlacklist(Block block){
+        if(block.getType() == Material.WALL_TORCH)
+            return false;
+        if(block.getBlockData() instanceof Door)
+            return false;
+        // All Clear
+        return true;
+    }
+
+    private static void Rotate(Directional blockData) {
+        switch (blockData.getFacing()) {
+            case NORTH:
+                blockData.setFacing(BlockFace.EAST);
+                break;
+            case EAST:
+                blockData.setFacing(BlockFace.SOUTH);
+                break;
+            case SOUTH:
+                blockData.setFacing(BlockFace.WEST);
+                break;
+            case WEST:
+                blockData.setFacing(BlockFace.NORTH);
+                break;
+        }
+    }
+
+    private static void Rotate(Orientable blockData) {
+        switch (blockData.getAxis()) {
+            case X:
+                blockData.setAxis(Axis.Z);
+                break;
+            case Z:
+                blockData.setAxis(Axis.X);
+                break;
+        }
+    }
+    private static void Flip(Orientable blockData){
+        switch (blockData.getAxis()){
+            case X:
+            case Z:
+                blockData.setAxis(Axis.Y);
+                break;
+            case Y:
+                blockData.setAxis(Axis.X);
+                break;
+        }
+    }
+
+    private static void Flip(Bisected blockData){
+        switch (blockData.getHalf()){
+            case TOP:
+                blockData.setHalf(Bisected.Half.BOTTOM);
+                break;
+            case BOTTOM:
+                blockData.setHalf(Bisected.Half.TOP);
+                break;
+        }
+    }
+    private static void Flip(Slab blockData){
+        switch (blockData.getType()){
+            case TOP:
+                blockData.setType(Slab.Type.BOTTOM);
+                break;
+            case BOTTOM:
+                blockData.setType(Slab.Type.TOP);
+                break;
+        }
+    }
     
     
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=false)
     public void ItemInteract(PlayerInteractEvent e) {
-        if(ignoreNext) return;
+        if (ignoreNext) return;
         // Checks player permissions
-        if(e.getPlayer().hasPermission("blockrotator.rotate")) {
-            if(e.getMaterial() == Material.BONE) {
-                if(!canBuild(e)) return;
-                if(e.hasBlock()) {
+        if (e.getPlayer().hasPermission("blockrotator.rotate")) {
+            if (e.getMaterial() == Material.BONE) {
+                if (!canBuild(e)) return;
+                if (e.hasBlock()) {
                     Block block = e.getClickedBlock();
-                    // Check terracotta
-                    if(block.getType().toString().contains("TERRACOTTA")) {
-                        byte blockData = block.getData();
-                        // Wrap block data back to 0
-                        if(blockData == 3) {
-                            blockData = 0;
-                        } else {
-                            blockData++;
-                        }
-                        block.setData(blockData);
-                    }
-                    // Check terracotta
-                    if(block.getType().toString().contains("STAIRS")) {
-                        byte blockData = block.getData();
-                        // Check if the player is sneaking
-                        if(e.getPlayer().isSneaking()) {
-                            // Flip the stairs upside down
-                            if(blockData > 3) {
-                                blockData = (byte)(blockData - 4);
-                            } else {
-                                blockData = (byte)(blockData + 4);
+                    if (PassesBlacklist(block)) {
+                        BlockState blockState = block.getState();
+                        BlockData blockData = blockState.getBlockData();
+
+                        if (e.getPlayer().isSneaking()) {
+                            if ((blockData instanceof Slab)) {
+                                Flip((Slab) blockData);
+                            } else if (blockData instanceof Bisected) {
+                                Flip((Bisected) blockData);
+                            } else if (blockData instanceof Orientable){
+                                Flip((Orientable) blockData);
                             }
                         } else {
-                            // Rotate
-                            if(blockData % 4 == 3) {
-                                blockData = (byte)((int)(blockData / 4) * 4);
-                            } else {
-                                blockData++;
+                            if (blockData instanceof Directional) {
+                                Rotate((Directional) blockData);
+                            } else if (blockData instanceof Orientable){
+                                Rotate((Orientable) blockData);
                             }
                         }
-                        block.setData(blockData);
+                        blockState.setBlockData(blockData);
+                        blockState.update();
                     }
                 }
-            }   
+            }
         }
     }
     
