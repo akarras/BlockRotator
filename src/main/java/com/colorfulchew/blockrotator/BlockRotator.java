@@ -44,21 +44,16 @@ public class BlockRotator extends JavaPlugin {
                 .set(CONTROL_ITEM_KEY, PersistentDataType.BYTE, (byte)0x1);
         rotationWandItem.setItemMeta(wandMeta);
 
-        rotationWand = new ShapedRecipe(CONTROL_ITEM_KEY, rotationWandItem);
-
-        rotationWand.shape(" g","I ");
-
-        rotationWand.setIngredient('I', Material.STICK);
-
         RecipeChoice.MaterialChoice allGlazed = new RecipeChoice.MaterialChoice(Arrays.asList(new Material[] {
                 Material.BLACK_GLAZED_TERRACOTTA,
-                Material.BLUE_GLAZED_TERRACOTTA,
-                Material.BROWN_GLAZED_TERRACOTTA,
-                Material.CYAN_GLAZED_TERRACOTTA,
                 Material.GRAY_GLAZED_TERRACOTTA,
-                Material.GREEN_GLAZED_TERRACOTTA,
                 Material.LIGHT_GRAY_GLAZED_TERRACOTTA,
+                Material.BLUE_GLAZED_TERRACOTTA,
+                Material.LIGHT_BLUE_GLAZED_TERRACOTTA,
+                Material.CYAN_GLAZED_TERRACOTTA,
                 Material.LIME_GLAZED_TERRACOTTA,
+                Material.GREEN_GLAZED_TERRACOTTA,
+                Material.BROWN_GLAZED_TERRACOTTA,
                 Material.MAGENTA_GLAZED_TERRACOTTA,
                 Material.ORANGE_GLAZED_TERRACOTTA,
                 Material.PINK_GLAZED_TERRACOTTA,
@@ -67,6 +62,10 @@ public class BlockRotator extends JavaPlugin {
                 Material.WHITE_GLAZED_TERRACOTTA,
                 Material.YELLOW_GLAZED_TERRACOTTA}));
 
+        rotationWand = new ShapedRecipe(CONTROL_ITEM_KEY, rotationWandItem);
+        rotationWand.shape(" g","I ");
+        
+        rotationWand.setIngredient('I', rotationWandItem.getType());
         rotationWand.setIngredient('g', allGlazed);
         rotationWand.setIngredient(' ', Material.AIR);
 
