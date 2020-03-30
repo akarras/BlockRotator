@@ -15,7 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.sql.Array;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -77,5 +76,7 @@ public class BlockRotator extends JavaPlugin {
     }
     
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        getServer().removeRecipe(CONTROL_ITEM_KEY);
+    }
 }
