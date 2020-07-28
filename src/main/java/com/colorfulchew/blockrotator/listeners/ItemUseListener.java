@@ -9,6 +9,7 @@ import com.colorfulchew.blockrotator.BlockRotator;
 import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -24,6 +25,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 /**
  *
@@ -36,6 +39,22 @@ public class ItemUseListener implements Listener {
     
     public ItemUseListener(BlockRotator plugin) {
         this.plugin = plugin;
+    }
+
+    private boolean HoldingWand(PlayerInteractEvent event){
+        if (!event.hasItem())
+            return false;
+        ItemStack item = event.getItem();
+        if (item.getType() != Material.STICK)
+            return false;
+        if( item.getItemMeta() == null
+                || item.getItemMeta().getPersistentDataContainer() == null)
+            return false;
+
+        byte isWand = item.getItemMeta().getPersistentDataContainer().getOrDefault(plugin.CONTROL_ITEM_KEY,
+                PersistentDataType.BYTE,
+                (byte)0b0);
+        return isWand == 0x1;
     }
 
     private static boolean PassesBlacklist(Block block){
@@ -113,7 +132,7 @@ public class ItemUseListener implements Listener {
         if (ignoreNext) return;
         // Checks player permissions
         if (e.getPlayer().hasPermission("blockrotator.rotate")) {
-            if (e.getMaterial() == Material.BONE) {
+            if(HoldingWand(e)){
                 if (!canBuild(e)) return;
                 if (e.hasBlock()) {
                     Block block = e.getClickedBlock();
