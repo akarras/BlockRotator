@@ -38,6 +38,7 @@ public class BlockRotator extends JavaPlugin {
 
         rotationWandItem = new ItemStack(Material.STICK);
         ItemMeta wandMeta = rotationWandItem.getItemMeta();
+        wandMeta.setDisplayName("Rotation Tool");
         wandMeta.setLore(Arrays.asList(new String[]{"Block Rotator"}));
         wandMeta.getPersistentDataContainer()
                 .set(CONTROL_ITEM_KEY, PersistentDataType.BYTE, (byte)0x1);
